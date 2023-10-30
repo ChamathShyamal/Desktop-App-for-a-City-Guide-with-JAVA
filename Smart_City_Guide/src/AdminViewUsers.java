@@ -1,0 +1,294 @@
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import javax.swing.RowFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableRowSorter;
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ *
+ * @author user
+ */
+public class AdminViewUsers extends javax.swing.JFrame {
+
+    /**
+     * Creates new form AdminViewUsers
+     */
+    DefaultTableModel mdl;
+    
+    public AdminViewUsers() {
+        initComponents();
+        
+        //To dispay the values in the table when the interface is loading
+        Show_UserData_In_JTable(); 
+    }
+    
+   //Creating the database connection by providing the location
+   public Connection getConnection()
+   {
+       Connection con;
+       try 
+       {
+           con = DriverManager.getConnection("jdbc:mysql://localhost/smartcity", "root","");
+           return con;
+       } 
+       catch (Exception ex) 
+       {
+           System.out.println(""+ex);
+           return null;
+       }
+   }
+   
+   //to get the list of users from the database
+                   //'ViewUsers' is the method which has getter and setter in its class
+   public ArrayList<ViewUsers> getViewUsersList()
+   {
+       // create an arraylist object using the public method 'ViewUsers' in 'ViewUsers' class
+       ArrayList<ViewUsers> viewusersList = new ArrayList<ViewUsers>();
+       Connection connection = getConnection();
+       
+       //SQL query to select all from the database table 'login_reg_table'
+       String query = "SELECT * FROM `login_reg_table` ";
+       Statement st;
+       ResultSet rs;
+       
+       //Using try...catch block to catch if there's an exception
+       try {
+           st = connection.createStatement();
+           rs = st.executeQuery(query);
+           ViewUsers usersdata;
+           
+           //Using while loop to retrieve all values in values from the class ViewUsers      
+           while(rs.next())
+           {
+               usersdata = new ViewUsers(rs.getInt("id"),rs.getString("FirstName"),
+               rs.getString("LastName"),rs.getString("UserType"),rs.getString("Username"),
+               rs.getString("Password"),rs.getString("Gender"),rs.getString("FromCountry"),
+               rs.getString("Email"),rs.getString("Telephone"));
+               
+               // use add() method to add elements in the list
+               viewusersList.add(usersdata);
+           }
+       } catch (Exception e) {
+           e.printStackTrace();
+       } 
+       return viewusersList;
+   }
+   
+   //Method to Display database records in JTable
+   public void Show_UserData_In_JTable()
+   {
+       ArrayList<ViewUsers> list = getViewUsersList();
+       DefaultTableModel model = (DefaultTableModel)jTableViewUsers.getModel();
+       
+       //Decalring the number of columns creating an object
+       Object[] row = new Object[10];
+       //Using a FOR Loop to add all the elements available in list
+       for(int i = 0; i < list.size(); i++)
+       {
+           row[0] = list.get(i).getId();
+           row[1] = list.get(i).getfName();
+           row[2] = list.get(i).getlName();
+           row[3] = list.get(i).getuType();
+           row[4] = list.get(i).getuName();
+           row[5] = list.get(i).getPswd();
+           row[6] = list.get(i).getGender();
+           row[7] = list.get(i).getFromCountry();
+           row[8] = list.get(i).getEmail();
+           row[9] = list.get(i).getTel();
+           
+           model.addRow(row);
+       }
+       
+       //sets columns width for jTableViewUsers
+           TableColumnModel columnModel = jTableViewUsers.getColumnModel();
+           columnModel.getColumn(0).setPreferredWidth(5);
+           columnModel.getColumn(1).setPreferredWidth(15);
+           columnModel.getColumn(2).setPreferredWidth(50);
+           columnModel.getColumn(3).setPreferredWidth(80);
+           columnModel.getColumn(4).setPreferredWidth(30);
+           columnModel.getColumn(5).setPreferredWidth(10);
+           columnModel.getColumn(6).setPreferredWidth(10);
+           columnModel.getColumn(7).setPreferredWidth(20);
+           columnModel.getColumn(8).setPreferredWidth(180);
+           columnModel.getColumn(9).setPreferredWidth(25);
+    }
+   
+   //Method for sorting all results from any key word searched by the user
+   public void search(String str)
+   {
+       mdl = (DefaultTableModel) jTableViewUsers.getModel();
+       TableRowSorter<DefaultTableModel> trs = new TableRowSorter<>(mdl);
+       jTableViewUsers.setRowSorter(trs);
+       trs.setRowFilter(RowFilter.regexFilter(str));
+       
+   }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        txtSearchUsers = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTableViewUsers = new javax.swing.JTable();
+        btnBack = new javax.swing.JButton();
+        btnExit = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel1.setFont(new java.awt.Font("Bernard MT Condensed", 3, 48)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(0, 0, 51));
+        jLabel1.setText("USERS OF SMART CITY GUIDE");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 20, 600, -1));
+
+        jLabel2.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(0, 0, 51));
+        jLabel2.setText("Search Using Any Keyword :");
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(123, 119, -1, -1));
+
+        txtSearchUsers.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        txtSearchUsers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtSearchUsersActionPerformed(evt);
+            }
+        });
+        txtSearchUsers.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSearchUsersKeyReleased(evt);
+            }
+        });
+        getContentPane().add(txtSearchUsers, new org.netbeans.lib.awtextra.AbsoluteConstraints(351, 108, 880, 39));
+
+        jTableViewUsers.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        jTableViewUsers.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "FirstName", "LastName", "UserType", "Username", "Password", "Gender", "FromCountry", "Email", "Telephone"
+            }
+        ));
+        jScrollPane1.setViewportView(jTableViewUsers);
+
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(123, 154, 1108, 480));
+
+        btnBack.setBackground(new java.awt.Color(153, 0, 0));
+        btnBack.setFont(new java.awt.Font("Bell MT", 1, 18)); // NOI18N
+        btnBack.setForeground(new java.awt.Color(255, 255, 255));
+        btnBack.setText("BACK");
+        btnBack.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 0, 0), 5, true));
+        btnBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnBack, new org.netbeans.lib.awtextra.AbsoluteConstraints(123, 678, 86, 49));
+
+        btnExit.setBackground(new java.awt.Color(153, 0, 0));
+        btnExit.setFont(new java.awt.Font("Bell MT", 1, 18)); // NOI18N
+        btnExit.setForeground(new java.awt.Color(255, 255, 255));
+        btnExit.setText("EXIT");
+        btnExit.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 0, 0), 5, true));
+        btnExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExitActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnExit, new org.netbeans.lib.awtextra.AbsoluteConstraints(1144, 678, 87, 49));
+
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/HomeMenu7.jpg"))); // NOI18N
+        jLabel3.setText("jLabel3");
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1370, 770));
+
+        pack();
+        setLocationRelativeTo(null);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
+        //Directing to Admin Menu window when user pressed Back button
+        dispose();
+        Admin_Menu am = new Admin_Menu();
+        am.setTitle ("Admin Menu");
+        am.setVisible(true);
+    }//GEN-LAST:event_btnBackActionPerformed
+
+    private void btnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitActionPerformed
+        // To exit the system
+        System.exit(0);
+    }//GEN-LAST:event_btnExitActionPerformed
+
+    private void txtSearchUsersKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchUsersKeyReleased
+        // To get the user input into a variable from the search text field
+        String searchString = txtSearchUsers.getText();
+        search (searchString);
+    }//GEN-LAST:event_txtSearchUsersKeyReleased
+
+    private void txtSearchUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchUsersActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSearchUsersActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(AdminViewUsers.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(AdminViewUsers.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(AdminViewUsers.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(AdminViewUsers.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new AdminViewUsers().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBack;
+    private javax.swing.JButton btnExit;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTableViewUsers;
+    private javax.swing.JTextField txtSearchUsers;
+    // End of variables declaration//GEN-END:variables
+}
